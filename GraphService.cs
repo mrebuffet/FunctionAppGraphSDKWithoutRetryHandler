@@ -2,6 +2,7 @@
 using Microsoft.Graph.Models;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary.Middleware;
+using Microsoft.Kiota.Http.HttpClientLibrary.Middleware.Options;
 
 namespace FunctionAppGraphSDKWithoutRetryHandler
 {
@@ -27,7 +28,7 @@ namespace FunctionAppGraphSDKWithoutRetryHandler
 
 			// Add a new one like the ChaosHandler that simulates random server failures
 			// Microsoft.Kiota.Http.HttpClientLibrary.Middleware.ChaosHandler
-			// handlers.Add(new ChaosHandler());
+			// handlers.Add(new ChaosHandler(new ChaosHandlerOption {ChaosPercentLevel = 50}));
 
 			HttpClient? httpClient = GraphClientFactory.Create(handlers);
 			this.GraphClient = new GraphServiceClient(httpClient, baseBearerTokenProvider);
@@ -38,6 +39,7 @@ namespace FunctionAppGraphSDKWithoutRetryHandler
 			return await this.GraphClient.Me.GetAsync(requestConfiguration => requestConfiguration.QueryParameters.Select = new string[] { "id", "displayName", "mail" });
 		}
 	}
+
 	public class TokenProvider : IAccessTokenProvider
 	{
 		public Task<string> GetAuthorizationTokenAsync(Uri uri, Dictionary<string, object> additionalAuthenticationContext = default, CancellationToken cancellationToken = default)
